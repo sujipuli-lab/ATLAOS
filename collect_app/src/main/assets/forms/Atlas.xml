@@ -1,8 +1,6 @@
 <?xml version="1.0"?>
-<h:html xmlns:h="http://www.w3.org/1999/xhtml"
-    xmlns:jr="http://openrosa.org/javarosa"
-    xmlns:odk="http://www.opendatakit.org/xforms"
-    xmlns="http://www.w3.org/2002/xforms">
+<h:html xmlns:h="http://www.w3.org/1999/xhtml" xmlns:jr="http://openrosa.org/javarosa"
+    xmlns:odk="http://www.opendatakit.org/xforms" xmlns="http://www.w3.org/2002/xforms">
     <h:head>
         <h:title>Atlas</h:title>
         <model odk:xforms-version="1.0.0">
@@ -2995,78 +2993,31 @@
                     </item>
                 </root>
             </instance>
-            <bind
-                nodeset="/S/Date"
-                type="date"
-                jr:preload="date"
-                jr:preloadParams="today" />
-            <bind
-                nodeset="/S/Time"
-                type="dateTime"
-                jr:preload="timestamp"
+            <bind nodeset="/S/Date" type="date" jr:preload="date" jr:preloadParams="today" />
+            <bind nodeset="/S/Time" type="dateTime" jr:preload="timestamp"
                 jr:preloadParams="start" />
-            <bind
-                nodeset="/S/P/StoryName"
+            <bind nodeset="/S/P/StoryName" type="string" />
+            <bind nodeset="/S/P/Artist" type="string" />
+            <bind nodeset="/S/P/Province" type="string" />
+            <bind nodeset="/S/P/District" type="string" />
+            <bind nodeset="/S/P/Village" type="string" />
+            <bind nodeset="/S/P/Type" type="string" />
+            <bind nodeset="/S/P/Type_other" relevant=" /S/P/Type  = &quot;Other&quot;"
                 type="string" />
-            <bind
-                nodeset="/S/P/Artist"
-                type="string" />
-            <bind
-                nodeset="/S/P/Province"
-                type="string" />
-            <bind
-                nodeset="/S/P/District"
-                type="string" />
-            <bind
-                nodeset="/S/P/Village"
-                type="string" />
-            <bind
-                nodeset="/S/P/Type"
-                type="string" />
-            <bind
-                nodeset="/S/P/Type_other"
-                relevant=" /S/P/Type  = &quot;Other&quot;"
-                type="string" />
-            <bind
-                nodeset="/S/XY/geopoint"
-                type="geopoint" />
-            <bind
-                calculate="selected-at( /S/XY/geopoint ,1)"
-                nodeset="/S/XY/Long"
-                type="string" />
-            <bind
-                calculate="selected-at( /S/XY/geopoint ,0)"
-                nodeset="/S/XY/Lat"
-                type="string" />
-            <bind
-                nodeset="/S/audio"
-                type="binary" />
-            <bind
-                nodeset="/S/image1"
-                type="binary" />
-            <bind
-                nodeset="/S/image2"
-                relevant=" /S/image1 "
-                type="binary" />
-            <bind
-                nodeset="/S/image3"
-                relevant=" /S/image2 "
-                type="binary" />
-            <bind
-                nodeset="/S/meta/instanceID"
-                readonly="true()"
-                type="string"
-                jr:preload="uid" />
-            <bind
-                calculate="concat('mic / ', /S/Date ,' / ', /S/P/Artist )"
-                nodeset="/S/meta/instanceName"
-                type="string" />
+            <bind nodeset="/S/XY/geopoint" type="geopoint" />
+            <bind calculate="selected-at( /S/XY/geopoint ,1)" nodeset="/S/XY/Long" type="string" />
+            <bind calculate="selected-at( /S/XY/geopoint ,0)" nodeset="/S/XY/Lat" type="string" />
+            <bind nodeset="/S/audio" type="binary" />
+            <bind nodeset="/S/image1" type="binary" />
+            <bind nodeset="/S/image2" relevant=" /S/image1 " type="binary" />
+            <bind nodeset="/S/image3" relevant=" /S/image2 " type="binary" />
+            <bind nodeset="/S/meta/instanceID" readonly="true()" type="string" jr:preload="uid" />
+            <bind calculate="concat('mic / ', /S/Date ,' / ', /S/P/Artist )"
+                nodeset="/S/meta/instanceName" type="string" />
         </model>
     </h:head>
     <h:body>
-        <group
-            appearance="field-list"
-            ref="/S/P">
+        <group appearance="field-list" ref="/S/P">
             <label ref="jr:itext('/S/P:label')" />
             <input ref="/S/P/StoryName">
                 <label ref="jr:itext('/S/P/StoryName:label')" />
@@ -3074,9 +3025,7 @@
             <input ref="/S/P/Artist">
                 <label ref="jr:itext('/S/P/Artist:label')" />
             </input>
-            <select1
-                appearance="minimal"
-                ref="/S/P/Province">
+            <select1 appearance="minimal" ref="/S/P/Province">
                 <label ref="jr:itext('/S/P/Province:label')" />
                 <item>
                     <label ref="jr:itext('/S/P/Province/Attapeu:label')" />
@@ -3151,9 +3100,7 @@
                     <value>Xienkhuang</value>
                 </item>
             </select1>
-            <select1
-                appearance="minimal"
-                ref="/S/P/District">
+            <select1 appearance="minimal" ref="/S/P/District">
                 <label ref="jr:itext('/S/P/District:label')" />
                 <itemset nodeset="instance('district')/root/item[prov= /S/P/Province ]">
                     <value ref="name" />
@@ -3163,9 +3110,7 @@
             <input ref="/S/P/Village">
                 <label ref="jr:itext('/S/P/Village:label')" />
             </input>
-            <select1
-                appearance="minimal"
-                ref="/S/P/Type">
+            <select1 appearance="minimal" ref="/S/P/Type">
                 <label ref="jr:itext('/S/P/Type:label')" />
                 <item>
                     <label ref="jr:itext('/S/P/Type/Music:label')" />
@@ -3188,37 +3133,22 @@
                 <label ref="jr:itext('/S/P/Type_other:label')" />
             </input>
         </group>
-        <group
-            appearance="field-list"
-            ref="/S/XY">
+        <group appearance="field-list" ref="/S/XY">
             <label ref="jr:itext('/S/XY:label')" />
-            <input
-                appearance="placement-map"
-                ref="/S/XY/geopoint">
+            <input appearance="placement-map" ref="/S/XY/geopoint">
                 <label ref="jr:itext('/S/XY/geopoint:label')" />
             </input>
         </group>
-        <upload
-            mediatype="audio/*"
-            ref="/S/audio">
+        <upload mediatype="audio/*" ref="/S/audio">
             <label ref="jr:itext('/S/audio:label')" />
         </upload>
-        <upload
-            appearance="annotate"
-            mediatype="image/*"
-            ref="/S/image1">
+        <upload appearance="annotate" mediatype="image/*" ref="/S/image1">
             <label ref="jr:itext('/S/image1:label')" />
         </upload>
-        <upload
-            appearance="annotate"
-            mediatype="image/*"
-            ref="/S/image2">
+        <upload appearance="annotate" mediatype="image/*" ref="/S/image2">
             <label ref="jr:itext('/S/image2:label')" />
         </upload>
-        <upload
-            appearance="annotate"
-            mediatype="image/*"
-            ref="/S/image3">
+        <upload appearance="annotate" mediatype="image/*" ref="/S/image3">
             <label ref="jr:itext('/S/image3:label')" />
         </upload>
     </h:body>
