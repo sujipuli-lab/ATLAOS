@@ -91,7 +91,7 @@ the specific language governing permissions and limitations under the License.
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
-
+        <activity android:name="atlaos.AtlaosInitActivity" />
         <activity android:name=".activities.MainMenuActivity" />
         <activity
             android:name=".activities.ScannerWithFlashlightActivity"
@@ -257,8 +257,8 @@ the specific language governing permissions and limitations under the License.
         </activity-alias>
 
         <activity-alias
-            android:name=".activities.SplashScreenActivity"
-            android:targetActivity=".activities.SplashScreenActivity">
+            android:name="AtlaosInitActivity"
+            android:targetActivity="atlaos.AtlaosInitActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
