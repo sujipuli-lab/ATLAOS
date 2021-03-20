@@ -35,8 +35,7 @@ public class AtlaosInitActivity extends Activity {
         permissionUtils.requestStoragePermissions(this, new PermissionListener() {
             @Override
             public void granted() {
-                // must be at the beginning of any activity that can be called from an external intent
-
+                //We should now have acces to the sdcard
                 launch();
             }
 
@@ -46,37 +45,36 @@ public class AtlaosInitActivity extends Activity {
                 finish();
             }
         });
-
     }
 
     private void launch() {
         try {
+            // Getting the installed app version
             PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
             String version = pInfo.versionName;
             int verCode = pInfo.versionCode;
             SharedPreferences initVersionPref = getSharedPreferences("InitVersion", Context.MODE_PRIVATE);
-
             if (verCode != initVersionPref.getInt("installedVersion", -1)) {
-
+                //First Launch of new version, redeploying forls
                 reinitforms();
+                initVersionPref.edit().putInt("installedVersion", verCode).commit();
             }
-            Intent intent = new Intent(this, SplashScreenActivity.class);
-            startActivity(intent);
+            // Launching the norml ODK activity
+            startActivity(new Intent(this, SplashScreenActivity.class));
 
         } catch (Exception e) {
-
             Timber.e(e, "could not manage init");
         }
     }
 
     private void reinitforms() throws Exception {
-        //
-
+        // Getting the default storage folder and making sure the folders for the forms exist
         StoragePathProvider spp = new StoragePathProvider();
         File formsDir = new File(spp.getDirPath(StorageSubdirectory.FORMS));
         if (!formsDir.exists()) {
             formsDir.mkdirs();
         }
+        // pushing all forms from src/asset/forms to the forms folder of odk
         for (String form : getAssets().list("forms")) {
             Timber.d("found :" + form);
             String formPath = "forms" + File.separator + form;
