@@ -9,10 +9,14 @@ import android.os.Bundle;
 import android.view.Window;
 
 import androidx.annotation.Nullable;
+import androidx.preference.PreferenceManager;
 
 import org.odk.collect.android.R;
 import org.odk.collect.android.activities.SplashScreenActivity;
 import org.odk.collect.android.listeners.PermissionListener;
+import org.odk.collect.android.preferences.AdminKeys;
+import org.odk.collect.android.preferences.AdminSharedPreferences;
+import org.odk.collect.android.preferences.GeneralKeys;
 import org.odk.collect.android.storage.StoragePathProvider;
 import org.odk.collect.android.storage.StorageSubdirectory;
 import org.odk.collect.android.utilities.PermissionUtils;
@@ -23,7 +27,7 @@ import java.io.InputStream;
 
 import timber.log.Timber;
 
-
+import static org.odk.collect.android.preferences.AdminPreferencesActivity.ADMIN_PREFERENCES;
 public class AtlaosInitActivity extends Activity {
 
 
@@ -60,6 +64,7 @@ public class AtlaosInitActivity extends Activity {
                 initVersionPref.edit().putInt("installedVersion", verCode).commit();
             }
             // Launching the norml ODK activity
+            finish();
             startActivity(new Intent(this, SplashScreenActivity.class));
 
         } catch (Exception e) {
@@ -93,6 +98,22 @@ public class AtlaosInitActivity extends Activity {
                 out.close();
             }
         }
+        //Setting default preferences
+        SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(GeneralKeys.KEY_PROTOCOL, getString(R.string.protocol_google_sheets));
+        String[] imageEntryValues = getResources().getStringArray(R.array.image_size_entry_values);
+        editor.putString(GeneralKeys.KEY_IMAGE_SIZE, imageEntryValues[2]);
+        editor.apply();
+        editor = getSharedPreferences(ADMIN_PREFERENCES, MODE_PRIVATE).edit();
+        editor.putString(AdminKeys.KEY_ADMIN_PW, "1234");
+        editor.apply();
+
+        AdminSharedPreferences.getInstance().save(AdminKeys.KEY_GET_BLANK, false);
+        AdminSharedPreferences.getInstance().save(AdminKeys.KEY_DELETE_SAVED, false);
+        AdminSharedPreferences.getInstance().save(AdminKeys.KEY_QR_CODE_SCANNER, false);
+
     }
 
 
