@@ -70,6 +70,7 @@ import org.odk.collect.android.widgets.QuestionWidget;
 
 import javax.inject.Singleton;
 
+import atlaos.AtlaosInitActivity;
 import dagger.BindsInstance;
 import dagger.Component;
 
@@ -222,6 +223,8 @@ public interface AppDependencyComponent {
     void inject(SaveAnswerFileErrorDialogFragment saveAnswerFileErrorDialogFragment);
 
     void inject(AudioRecordingErrorDialogFragment audioRecordingErrorDialogFragment);
+
+    void inject(AtlaosInitActivity activity);
 
     OpenRosaHttpInterface openRosaHttpInterface();
 

@@ -1,5 +1,6 @@
 package atlaos;
 
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -13,34 +14,50 @@ import androidx.preference.PreferenceManager;
 
 import org.odk.collect.android.R;
 import org.odk.collect.android.activities.SplashScreenActivity;
+import org.odk.collect.android.gdrive.GoogleAccountNotSetDialog;
+import org.odk.collect.android.gdrive.GoogleAccountsManager;
+import org.odk.collect.android.injection.DaggerUtils;
 import org.odk.collect.android.listeners.PermissionListener;
 import org.odk.collect.android.preferences.AdminKeys;
 import org.odk.collect.android.preferences.AdminSharedPreferences;
 import org.odk.collect.android.preferences.GeneralKeys;
+import org.odk.collect.android.preferences.GeneralSharedPreferences;
 import org.odk.collect.android.storage.StoragePathProvider;
 import org.odk.collect.android.storage.StorageSubdirectory;
 import org.odk.collect.android.utilities.PermissionUtils;
+import org.odk.collect.android.utilities.PlayServicesChecker;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
+import javax.inject.Inject;
+
 import timber.log.Timber;
 
 import static org.odk.collect.android.preferences.AdminPreferencesActivity.ADMIN_PREFERENCES;
+import static org.odk.collect.android.preferences.GeneralKeys.KEY_SELECTED_GOOGLE_ACCOUNT;
+
 public class AtlaosInitActivity extends Activity {
 
+
+    private static final int REQUEST_ACCOUNT_PICKER = 1000;
+    @Inject
+    GoogleAccountsManager accountsManager;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DaggerUtils.getComponent(this).inject(this);
+
+        //      GoogleAccountNotSetDialog.show(this);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         PermissionUtils permissionUtils = new PermissionUtils(R.style.Theme_Collect_Dialog_PermissionAlert);
         permissionUtils.requestStoragePermissions(this, new PermissionListener() {
             @Override
             public void granted() {
-                //We should now have acces to the sdcard
-                launch();
+                //We should now have acces to the sdcard, checking for user configuration
+                checkaccount();
             }
 
             @Override
@@ -49,6 +66,33 @@ public class AtlaosInitActivity extends Activity {
                 finish();
             }
         });
+    }
+
+    public void checkaccount() {
+        //Checking if an account is already set
+        String account = (String) GeneralSharedPreferences.getInstance().get(KEY_SELECTED_GOOGLE_ACCOUNT);
+        if ("".equals(account)) {
+            addAcountAccess();
+        } else {
+            launch();
+        }
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_ACCOUNT_PICKER:
+                if (resultCode == RESULT_OK && data != null && data.getExtras() != null) {
+                    String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+                    accountsManager.selectAccount(accountName);
+                    //   selectedGoogleAccountPreference.setSummary(accountName);
+                    launch();
+                }
+                //       allowClickSelectedGoogleAccountPreference = true;
+                break;
+        }
     }
 
     private void launch() {
@@ -113,7 +157,27 @@ public class AtlaosInitActivity extends Activity {
         AdminSharedPreferences.getInstance().save(AdminKeys.KEY_GET_BLANK, false);
         AdminSharedPreferences.getInstance().save(AdminKeys.KEY_DELETE_SAVED, false);
         AdminSharedPreferences.getInstance().save(AdminKeys.KEY_QR_CODE_SCANNER, false);
+        GoogleAccountNotSetDialog.show(this);
+    }
 
+    private void addAcountAccess() {
+
+        if (new PlayServicesChecker().isGooglePlayServicesAvailable(this)) {
+
+            new PermissionUtils(R.style.Theme_Collect_Dialog_PermissionAlert).requestGetAccountsPermission(this, new PermissionListener() {
+                @Override
+                public void granted() {
+                    Intent intent = accountsManager.getAccountChooserIntent();
+                    startActivityForResult(intent, REQUEST_ACCOUNT_PICKER);
+                }
+
+                @Override
+                public void denied() {
+                }
+            });
+        } else {
+            new PlayServicesChecker().showGooglePlayServicesAvailabilityErrorDialog(this);
+        }
     }
 
 
